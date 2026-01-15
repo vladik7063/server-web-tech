@@ -1,48 +1,49 @@
-const express = require('express');
-const puppeteer = require('puppeteer');
 
-const https = require('https');
-const fs = require('fs');
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const http = require("http");
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', '*');
-    next();
-});
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+  "Access-Control-Allow-Headers":
+    "x-test,ngrok-skip-browser-warning,Content-Type,Accept,Access-Control-Allow-Headers",
+};
 
-app.get('/login/', (_, res) => {
-    res.send('99803203-b584-4d0c-a62e-0e9704ea6563');
-});
+const s = http.createServer((req, res) => {
+  if (req.url === "/result4/") {
+    let body = "";
 
-app.get('/test/', async (req, res) => {
-    const targetURL = req.query.URL;
-
-    const browser = await puppeteer.launch({
-        headless: 'new',
-        executablePath: '/usr/bin/chromium-browser', // Путь до chromium в системе
-        args: ['--no-sandbox', '--disable-setuid-sandbox'] // Эта строка добавлена для моего VPS на Ubuntu 24.04
-    })
-
-    const page = await browser.newPage();
-    await page.goto(targetURL, { waitUntil: 'networkidle2' });
-
-    await page.click('#bt');
-
-    await page.waitForFunction(() => {
-        const input = document.querySelector('#inp');
-        return input.value;
-    }, { timeout: 1000 });
-
-    const result = await page.evaluate(() => {
-        return document.querySelector('#inp').value;
+    req.on("data", (chunk) => {
+      body += chunk;
     });
 
-    await browser.close();
+    req.on("end", () => {
+      let parsedBody = body;
 
-    res.send(result);
+      res.writeHead(200, { ...CORS });
+
+      res.write(
+        JSON.stringify({
+          message: "73571251-0d67-43a6-8f17-71d0f123732a",
+          "x-result": req.headers["x-test"],
+          "x-body": String(parsedBody),
+        })
+      );
+
+      res.end();
+    });
+
+    return;
+  }
+
+  res.end();
 });
 
-app.listen(process.env.PORT || 3000);
+s.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
