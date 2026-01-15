@@ -2,7 +2,7 @@ const http = require("http");
 
 const PORT = process.env.PORT || 3000;
 
-const LOGIN = "73571251-0d67-43a6-8f17-71d0f123732avladik7063";
+const LOGIN = "73571251-0d67-43a6-8f17-71d0f123732a";
 
 const server = http.createServer((req, res) => {
   if (req.url === "/login") {
