@@ -1,49 +1,34 @@
-
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
 const http = require("http");
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
-  "Access-Control-Allow-Headers":
-    "x-test,ngrok-skip-browser-warning,Content-Type,Accept,Access-Control-Allow-Headers",
-};
+const LOGIN = "73571251-0d67-43a6-8f17-71d0f123732avladik7063";
 
-const s = http.createServer((req, res) => {
-  if (req.url === "/result4/") {
-    let body = "";
-
-    req.on("data", (chunk) => {
-      body += chunk;
-    });
-
-    req.on("end", () => {
-      let parsedBody = body;
-
-      res.writeHead(200, { ...CORS });
-
-      res.write(
-        JSON.stringify({
-          message: "73571251-0d67-43a6-8f17-71d0f123732a",
-          "x-result": req.headers["x-test"],
-          "x-body": String(parsedBody),
-        })
-      );
-
-      res.end();
-    });
-
+const server = http.createServer((req, res) => {
+  if (req.url === "/login") {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end(LOGIN);
     return;
   }
 
-  res.end();
+  if (req.url === "/hour") {
+    const now = new Date();
+
+    const moscowHour = new Intl.DateTimeFormat("ru-RU", {
+      timeZone: "Europe/Moscow",
+      hour: "2-digit",
+      hour12: false,
+    }).format(now);
+
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end(moscowHour);
+    return;
+  }
+
+  res.writeHead(404, { "Content-Type": "text/plain" });
+  res.end("Not found");
 });
 
-s.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
